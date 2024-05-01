@@ -816,14 +816,12 @@ static void DrawStatus() {
 
 static void DrawF(uint32_t f) {
   sprintf(String, "%u.%05u", f / 100000, f % 100000);
-  UI_PrintStringSmall(String, 8, 127, 0);
+  UI_PrintStringSmall(String, 8, 127, 1);
 
 #if ENABLE_SPECTRUM_SHOW_CHANNEL_NAME
   if (isKnownChannel) {
     sprintf(String, "%s", channelName);
-    UI_PrintStringSmallBold(String, 8, 127, 1);
-  } else {
-    UI_PrintStringSmallBold("          ", 8, 127, 1);
+    UI_PrintStringSmallBold(String, 8, 127, 0);
   }
 #endif
   sprintf(String, "%3s", gModulationStr[settings.modulationType]);
