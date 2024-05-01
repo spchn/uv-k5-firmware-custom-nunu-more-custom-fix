@@ -77,20 +77,8 @@ bool RADIO_CheckValidChannel(uint16_t Channel, bool bCheckScanList, uint8_t VFO)
 		return false;
 
 	if (bCheckScanList) {
-		switch (VFO) {
-			case 0:
-				if (!att.scanlist1)
-					return false;
-				break;
-
-			case 1:
-				if (!att.scanlist2)
-					return false;
-				break;
-
-			default:
-				return true;
-		}
+		if (att.scanlist == VFO+1)
+			return true;
 	}
 
 	return true;
@@ -122,8 +110,7 @@ void RADIO_InitInfo(VFO_Info_t *pInfo, const uint8_t ChannelSave, const uint32_t
 	memset(pInfo, 0, sizeof(*pInfo));
 
 	pInfo->Band                     = FREQUENCY_GetBand(Frequency);
-	pInfo->SCANLIST1_PARTICIPATION  = false;
-	pInfo->SCANLIST2_PARTICIPATION  = false;
+	pInfo->SCANLIST  				= 0;
 	pInfo->STEP_SETTING             = STEP_12_5kHz;
 	pInfo->StepFrequency            = gStepFrequencyTable[pInfo->STEP_SETTING];
 	pInfo->CHANNEL_SAVE             = ChannelSave;
@@ -205,21 +192,12 @@ void RADIO_ConfigureChannel(const unsigned int VFO, const unsigned int configure
 		band = BAND6_400MHz;
 	}
 
-	bool bParticipation1;
-	bool bParticipation2;
-	if (IS_MR_CHANNEL(channel)) {
-		bParticipation1 = att.scanlist1;
-		bParticipation2 = att.scanlist2;
-	}
-	else {
+	if (!IS_MR_CHANNEL(channel)) {
 		band = channel - FREQ_CHANNEL_FIRST;
-		bParticipation1 = true;
-		bParticipation2 = true;
 	}
 
 	pVfo->Band                    = band;
-	pVfo->SCANLIST1_PARTICIPATION = bParticipation1;
-	pVfo->SCANLIST2_PARTICIPATION = bParticipation2;
+	pVfo->SCANLIST 				  = att.scanlist;
 	pVfo->CHANNEL_SAVE            = channel;
 
 	uint16_t base;
@@ -407,8 +385,6 @@ void RADIO_ConfigureChannel(const unsigned int VFO, const unsigned int configure
 		pVfo->freq_config_RX.CodeType = CODE_TYPE_OFF;
 		pVfo->freq_config_TX.CodeType = CODE_TYPE_OFF;
 	}
-
-	pVfo->Compander = att.compander;
 
 	BK4819_InitAGC(gEeprom.RX_AGC, gTxVfo->Modulation);
 	BK4819_SetAGC(gEeprom.RX_AGC!=RX_AGC_OFF);

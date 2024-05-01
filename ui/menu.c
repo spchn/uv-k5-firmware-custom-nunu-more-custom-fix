@@ -60,8 +60,7 @@ const t_menu_item MenuList[] =
 	{"Compnd", VOICE_ID_INVALID,                       MENU_COMPAND       },
 	{"Demodu", VOICE_ID_INVALID,                       MENU_AM            }, // was "AM"
 	{"RxAGC",  VOICE_ID_INVALID,                       MENU_RX_AGC        }, // RX Auto Gain Control
-	{"ScAdd1", VOICE_ID_INVALID,                       MENU_S_ADD1        },
-	{"ScAdd2", VOICE_ID_INVALID,                       MENU_S_ADD2        },
+	{"ScList", VOICE_ID_INVALID,					   MENU_S_LIST        },
 	{"ChSave", VOICE_ID_MEMORY_CHANNEL,                MENU_MEM_CH        }, // was "MEM-CH"
 	{"ChDele", VOICE_ID_DELETE_CHANNEL,                MENU_DEL_CH        }, // was "DEL-CH"
 	{"ChName", VOICE_ID_INVALID,                       MENU_MEM_NAME      },	
@@ -146,8 +145,7 @@ const t_menu_item MenuList[] =
 };
 
 const int CHANNEL_ONLY_SETTINGS[] = {
-	MENU_S_ADD1,
-	MENU_S_ADD2,
+	MENU_S_LIST,
 	MENU_DEL_CH,
 	MENU_MEM_NAME,
 	MENU_1_CALL
@@ -633,8 +631,6 @@ void UI_DisplayMenu(void)
 						sprintf(String, "%d", gSubMenuSelection);
 					break;
 				case MENU_VOX_DELAY:
-					sprintf(String, "%d", gSubMenuSelection);
-					break;
 			#endif
 
 			case MENU_ABR:
@@ -667,8 +663,10 @@ void UI_DisplayMenu(void)
 
 			case MENU_BCL:
 			case MENU_BEEP:
-			case MENU_S_ADD1:
-			case MENU_S_ADD2:
+			case MENU_S_LIST:
+				sprintf(String, "%d", gSubMenuSelection);
+				break;
+
 			case MENU_D_ST:
 	#ifdef ENABLE_DTMF_CALLING
 			case MENU_D_DCD:

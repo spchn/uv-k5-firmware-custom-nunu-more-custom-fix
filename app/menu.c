@@ -233,8 +233,11 @@ int MENU_GetLimits(uint8_t menu_id, int32_t *pMin, int32_t *pMax)
 		case MENU_BCL:
 		case MENU_BEEP:
 		case MENU_AUTOLK:
-		case MENU_S_ADD1:
-		case MENU_S_ADD2:
+		case MENU_S_LIST:
+			*pMin = 0;
+			*pMax = 15;
+			break;
+
 		case MENU_D_ST:
 #ifdef ENABLE_DTMF_CALLING
 		case MENU_D_DCD:
@@ -646,15 +649,8 @@ void MENU_AcceptSetting(void)
 			gKeyLockCountdown        = 30;
 			break;
 
-		case MENU_S_ADD1:
-			gTxVfo->SCANLIST1_PARTICIPATION = gSubMenuSelection;
-			SETTINGS_UpdateChannel(gTxVfo->CHANNEL_SAVE, gTxVfo, true);
-			gVfoConfigureMode = VFO_CONFIGURE;
-			gFlagResetVfos    = true;
-			return;
-
-		case MENU_S_ADD2:
-			gTxVfo->SCANLIST2_PARTICIPATION = gSubMenuSelection;
+		case MENU_S_LIST:
+			gTxVfo->SCANLIST = gSubMenuSelection;
 			SETTINGS_UpdateChannel(gTxVfo->CHANNEL_SAVE, gTxVfo, true);
 			gVfoConfigureMode = VFO_CONFIGURE;
 			gFlagResetVfos    = true;
@@ -1057,12 +1053,8 @@ void MENU_ShowCurrentSetting(void)
 			gSubMenuSelection = gEeprom.AUTO_KEYPAD_LOCK;
 			break;
 
-		case MENU_S_ADD1:
-			gSubMenuSelection = gTxVfo->SCANLIST1_PARTICIPATION;
-			break;
-
-		case MENU_S_ADD2:
-			gSubMenuSelection = gTxVfo->SCANLIST2_PARTICIPATION;
+		case MENU_S_LIST:
+			gSubMenuSelection = gTxVfo->SCANLIST;
 			break;
 
 		case MENU_MIC:

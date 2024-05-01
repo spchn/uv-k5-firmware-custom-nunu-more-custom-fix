@@ -65,20 +65,10 @@ void toggle_chan_scanlist(void)
 		return;
 	}
 
-	if (gTxVfo->SCANLIST1_PARTICIPATION)
-	{
-		if (gTxVfo->SCANLIST2_PARTICIPATION)
-			gTxVfo->SCANLIST1_PARTICIPATION = 0;
-		else
-			gTxVfo->SCANLIST2_PARTICIPATION = 1;
-	}
+	if (gTxVfo->SCANLIST == S_SCAN_LIST_15)
+		gTxVfo->SCANLIST = 0;
 	else
-	{
-		if (gTxVfo->SCANLIST2_PARTICIPATION)
-			gTxVfo->SCANLIST2_PARTICIPATION = 0;
-		else
-			gTxVfo->SCANLIST1_PARTICIPATION = 1;
-	}
+		gTxVfo->SCANLIST++;
 
 	SETTINGS_UpdateChannel(gTxVfo->CHANNEL_SAVE, gTxVfo, true);
 
