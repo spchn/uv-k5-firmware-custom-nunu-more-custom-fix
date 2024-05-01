@@ -113,7 +113,8 @@ void UI_DisplayStatus()
 						s = "*"; 
 						break;
 					default:
-						s = fprintf("%d", gEeprom.SCAN_LIST_DEFAULT);
+						s = "  ";
+						sprintf(s, "%d", gEeprom.SCAN_LIST_DEFAULT);
 						break;
 				}
 			}
