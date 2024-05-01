@@ -173,6 +173,7 @@ void APP_RunSpectrum(void);
 
 #ifdef ENABLE_SPECTRUM_SHOW_CHANNEL_NAME
   void LookupChannelInfo();
+  void LookupChannelModulation();
 #endif
 
 #endif /* ifndef SPECTRUM_H */

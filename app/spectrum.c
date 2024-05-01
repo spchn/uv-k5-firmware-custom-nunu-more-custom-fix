@@ -20,6 +20,7 @@
 #endif
 
 #include "driver/backlight.h"
+#include "driver/eeprom.h"   // EEPROM_ReadBuffer()
 #include "audio.h"
 #include "ui/helper.h"
 #ifdef ENABLE_SPECTRUM_COPY_VFO
@@ -69,6 +70,7 @@ static char String[32];
   bool     isKnownChannel = false;
   int      channel;
   char     channelName[12];
+  ModulationMode_t  channelModulation;
   void     LoadValidMemoryChannels();
 #endif
 
@@ -394,6 +396,16 @@ static void ToggleAudio(bool on) {
 
 static void ToggleRX(bool on) {
   isListening = on;
+
+#ifdef ENABLE_SPECTRUM_SHOW_CHANNEL_NAME
+  // automatically switch modulation if known channel
+  if (on && isKnownChannel) {
+    settings.modulationType = channelModulation;
+    RADIO_SetModulation(settings.modulationType);
+    BK4819_InitAGC(gEeprom.RX_AGC, settings.modulationType);
+    redrawScreen = true;
+  }
+#endif
 
   // turn on green led only if screen brightness is over 7
   if(gEeprom.BACKLIGHT_MAX > 7)
@@ -831,10 +843,26 @@ static void DrawF(uint32_t f) {
 
     if (isKnownChannel){
       memmove(channelName, gMR_ChannelFrequencyAttributes[channel].Name, sizeof(channelName));
+      LookupChannelModulation();
     }
 
     redrawStatus = true;
   }
+
+void LookupChannelModulation() {
+	  uint16_t base;
+		base = channel * 16;
+
+		uint8_t tmp;
+		uint8_t data[8];
+
+		EEPROM_ReadBuffer(base + 8, data, sizeof(data));
+
+		tmp = data[3] >> 4;
+		if (tmp >= MODULATION_UKNOWN)
+			tmp = MODULATION_FM;
+		channelModulation = tmp;
+}
 #endif
 
 static void DrawNums() {
