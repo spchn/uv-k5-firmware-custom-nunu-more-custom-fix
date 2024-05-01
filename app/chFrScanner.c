@@ -171,77 +171,16 @@ static void NextFreqChannel(void)
 
 static void NextMemChannel(void)
 {
-	static unsigned int prev_mr_chan = 0;
-	// const bool          enabled      = (gEeprom.SCAN_LIST_DEFAULT < 2) ? gEeprom.SCAN_LIST_ENABLED[gEeprom.SCAN_LIST_DEFAULT] : true;
-	const bool 			enabled 	 = false;
-	const int           chan1        = (gEeprom.SCAN_LIST_DEFAULT < 2) ? gEeprom.SCANLIST_PRIORITY_CH1[gEeprom.SCAN_LIST_DEFAULT] : -1;
-	const int           chan2        = (gEeprom.SCAN_LIST_DEFAULT < 2) ? gEeprom.SCANLIST_PRIORITY_CH2[gEeprom.SCAN_LIST_DEFAULT] : -1;
 	const unsigned int  prev_chan    = gNextMrChannel;
 	unsigned int        chan         = 0;
 
-	if (enabled)
-	{
-		switch (currentScanList)
-		{
-			case SCAN_NEXT_CHAN_SCANLIST1:
-				prev_mr_chan = gNextMrChannel;
+	chan = RADIO_FindNextChannel(gNextMrChannel + gScanStateDir, gScanStateDir, (gEeprom.SCAN_LIST_DEFAULT != SCAN_NEXT_CHAN_SCANLIST_ALL), gEeprom.SCAN_LIST_DEFAULT);
+	if (chan == 0xFF)
+	{	// no valid channel found
+		chan = MR_CHANNEL_FIRST;
+	}
 	
-				if (chan1 >= 0)
-				{
-					if (RADIO_CheckValidChannel(chan1, false, 0))
-					{
-						currentScanList = SCAN_NEXT_CHAN_SCANLIST1;
-						gNextMrChannel   = chan1;
-						break;
-					}
-				}
-				[[fallthrough]];
-			case SCAN_NEXT_CHAN_SCANLIST2:
-				if (chan2 >= 0)
-				{
-					if (RADIO_CheckValidChannel(chan2, false, 0))
-					{
-						currentScanList = SCAN_NEXT_CHAN_SCANLIST2;
-						gNextMrChannel   = chan2;
-						break;
-					}
-				}
-				[[fallthrough]];
-				
-			// this bit doesn't yet work if the other VFO is a frequency
-			case SCAN_NEXT_CHAN_DUAL_WATCH:
-				// dual watch is enabled - include the other VFO in the scan
-//				if (gEeprom.DUAL_WATCH != DUAL_WATCH_OFF)
-//				{
-//					chan = (gEeprom.RX_VFO + 1) & 1u;
-//					chan = gEeprom.ScreenChannel[chan];
-//					if (IS_MR_CHANNEL(chan))
-//					{
-//						currentScanList = SCAN_NEXT_CHAN_DUAL_WATCH;
-//						gNextMrChannel   = chan;
-//						break;
-//					}
-//				}
-
-			default:
-			case SCAN_NEXT_CHAN_MR:
-				currentScanList = SCAN_NEXT_CHAN_MR;
-				gNextMrChannel   = prev_mr_chan;
-				chan             = 0xff;
-				break;
-		}
-	}
-
-	if (!enabled || chan == 0xff)
-	{
-		chan = RADIO_FindNextChannel(gNextMrChannel + gScanStateDir, gScanStateDir, (gEeprom.SCAN_LIST_DEFAULT != SCAN_NEXT_CHAN_SCANLIST_ALL), gEeprom.SCAN_LIST_DEFAULT);
-		if (chan == 0xFF)
-		{	// no valid channel found
-			chan = MR_CHANNEL_FIRST;
-		}
-		
-		gNextMrChannel = chan;
-	}
+	gNextMrChannel = chan;
 
 	if (gNextMrChannel != prev_chan)
 	{
@@ -259,8 +198,4 @@ static void NextMemChannel(void)
 #else
 	gScanPauseDelayIn_10ms = scan_pause_delay_in_3_10ms;
 #endif
-
-	if (enabled)
-		if (++currentScanList >= SCAN_NEXT_NUM)
-			currentScanList = SCAN_NEXT_CHAN_SCANLIST1;  // back round we go
 }
