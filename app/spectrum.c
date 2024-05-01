@@ -1522,13 +1522,13 @@ void APP_RunSpectrum() {
   void LoadValidMemoryChannels()
   {
     memset(scanChannel,0,sizeof(scanChannel));
-    scanChannelsCount = RADIO_ValidMemoryChannelsCount((settings.scanlist != S_SCAN_LIST_ALL), settings.scanList);
+    scanChannelsCount = RADIO_ValidMemoryChannelsCount((settings.scanList != S_SCAN_LIST_ALL), settings.scanList);
     signed int channelIndex=-1;
     for(int i=0; i < scanChannelsCount; i++)
     {
       int nextChannel;
-      nextChannel = RADIO_FindNextChannel((channelIndex)+1, 1, (settings.scanlist != S_SCAN_LIST_ALL), settings.scanList);
-      
+      nextChannel = RADIO_FindNextChannel((channelIndex)+1, 1, (settings.scanList != S_SCAN_LIST_ALL), settings.scanList);
+
       if (nextChannel == 0xFF)
       {	// no valid channel found
         break;
