@@ -105,22 +105,21 @@ void UI_DisplayStatus()
 		// SCAN indicator
 		if (gScanStateDir != SCAN_OFF || SCANNER_IsScanning())
 		{
-			char * s = "";
+			char s[2];
 			if (IS_MR_CHANNEL(gNextMrChannel) && !SCANNER_IsScanning())
 			{	// channel mode
 				switch(gEeprom.SCAN_LIST_DEFAULT) {
 					case 0:
-						s = "*"; 
+						sprintf(s, "*"); 
 						break;
 					default:
-						s = "  ";
 						sprintf(s, "%d", gEeprom.SCAN_LIST_DEFAULT);
 						break;
 				}
 			}
 			else
 			{	// frequency mode
-				s = "S";
+				sprintf(s, "S");
 			}
 			UI_PrintStringSmallBuffer(s, line + x);
 			x1 = x + 7;
