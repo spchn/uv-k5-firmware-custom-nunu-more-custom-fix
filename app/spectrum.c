@@ -778,7 +778,7 @@ static void DrawStatus() {
 #elif ENABLE_SPECTRUM_SHOW_CHANNEL_NAME
   if (isKnownChannel)
   {
-    sprintf(String, "%d/%d M%i:%s", settings.dbMin, settings.dbMax, channel+1, channelName);
+    sprintf(String, "%d/%d M%i", settings.dbMin, settings.dbMax, channel+1);
   }
   else
   {
