@@ -174,7 +174,7 @@ static void NextMemChannel(void)
 	const unsigned int  prev_chan    = gNextMrChannel;
 	unsigned int        chan         = 0;
 
-	chan = RADIO_FindNextChannel(gNextMrChannel + gScanStateDir, gScanStateDir, (gEeprom.SCAN_LIST_DEFAULT != SCAN_NEXT_CHAN_SCANLIST_ALL), gEeprom.SCAN_LIST_DEFAULT);
+	chan = RADIO_FindNextChannel(gNextMrChannel + gScanStateDir, gScanStateDir, (gEeprom.SCAN_LIST_DEFAULT != SCAN_NEXT_CHAN_SCANLIST_ALL), gEeprom.SCAN_LIST_DEFAULT-1);
 	if (chan == 0xFF)
 	{	// no valid channel found
 		chan = MR_CHANNEL_FIRST;

@@ -121,7 +121,7 @@ void UI_DisplayStatus()
 			{	// frequency mode
 				sprintf(s, "S");
 			}
-			UI_PrintStringSmallBuffer(s, line + x);
+			UI_PrintStringSmallBuffer(s, line);
 			x1 = x + 7;
 		}
 	}
