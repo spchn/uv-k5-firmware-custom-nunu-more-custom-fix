@@ -472,7 +472,7 @@ void UI_DisplayMain(void)
 				const ChannelAttributes_t att = gMR_ChannelAttributes[gEeprom.ScreenChannel[vfo_num]];
 				if (att.scanlist > 0) {
 					sprintf(String, "%d", att.scanlist);
-					UI_PrintStringSmall(String, 120, 0, line + 1);
+					UI_PrintStringSmall(String, 113, 0, line + 1);
 				}
 
 				// compander symbol

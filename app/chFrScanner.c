@@ -14,27 +14,6 @@ uint32_t          gScanRangeStart;
 uint32_t          gScanRangeStop;
 #endif
 
-typedef enum {
-	SCAN_NEXT_CHAN_SCANLIST1 = 0,
-	SCAN_NEXT_CHAN_SCANLIST2,
-	SCAN_NEXT_CHAN_SCANLIST3,
-	SCAN_NEXT_CHAN_SCANLIST4,
-	SCAN_NEXT_CHAN_SCANLIST5,
-	SCAN_NEXT_CHAN_SCANLIST6,
-	SCAN_NEXT_CHAN_SCANLIST7,
-	SCAN_NEXT_CHAN_SCANLIST8,
-	SCAN_NEXT_CHAN_SCANLIST9,
-	SCAN_NEXT_CHAN_SCANLIST10,
-	SCAN_NEXT_CHAN_SCANLIST11,
-	SCAN_NEXT_CHAN_SCANLIST12,
-	SCAN_NEXT_CHAN_SCANLIST13,
-	SCAN_NEXT_CHAN_SCANLIST14,
-	SCAN_NEXT_CHAN_SCANLIST15,
-	SCAN_NEXT_CHAN_DUAL_WATCH,
-	SCAN_NEXT_CHAN_MR,
-	SCAN_NEXT_NUM
-} scan_next_chan_t;
-
 scan_next_chan_t	currentScanList;
 uint32_t            initialFrqOrChan;
 uint8_t           	initialCROSS_BAND_RX_TX;
@@ -193,7 +172,8 @@ static void NextFreqChannel(void)
 static void NextMemChannel(void)
 {
 	static unsigned int prev_mr_chan = 0;
-	const bool          enabled      = (gEeprom.SCAN_LIST_DEFAULT < 2) ? gEeprom.SCAN_LIST_ENABLED[gEeprom.SCAN_LIST_DEFAULT] : true;
+	// const bool          enabled      = (gEeprom.SCAN_LIST_DEFAULT < 2) ? gEeprom.SCAN_LIST_ENABLED[gEeprom.SCAN_LIST_DEFAULT] : true;
+	const bool 			enabled 	 = false;
 	const int           chan1        = (gEeprom.SCAN_LIST_DEFAULT < 2) ? gEeprom.SCANLIST_PRIORITY_CH1[gEeprom.SCAN_LIST_DEFAULT] : -1;
 	const int           chan2        = (gEeprom.SCAN_LIST_DEFAULT < 2) ? gEeprom.SCANLIST_PRIORITY_CH2[gEeprom.SCAN_LIST_DEFAULT] : -1;
 	const unsigned int  prev_chan    = gNextMrChannel;
@@ -254,7 +234,7 @@ static void NextMemChannel(void)
 
 	if (!enabled || chan == 0xff)
 	{
-		chan = RADIO_FindNextChannel(gNextMrChannel + gScanStateDir, gScanStateDir, (gEeprom.SCAN_LIST_DEFAULT < 2) ? true : false, gEeprom.SCAN_LIST_DEFAULT);
+		chan = RADIO_FindNextChannel(gNextMrChannel + gScanStateDir, gScanStateDir, (gEeprom.SCAN_LIST_DEFAULT != SCAN_NEXT_CHAN_SCANLIST_ALL), gEeprom.SCAN_LIST_DEFAULT);
 		if (chan == 0xFF)
 		{	// no valid channel found
 			chan = MR_CHANNEL_FIRST;

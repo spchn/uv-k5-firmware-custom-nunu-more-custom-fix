@@ -79,6 +79,8 @@ bool RADIO_CheckValidChannel(uint16_t Channel, bool bCheckScanList, uint8_t VFO)
 	if (bCheckScanList) {
 		if (att.scanlist == VFO+1)
 			return true;
+		else
+			return false;
 	}
 
 	return true;
