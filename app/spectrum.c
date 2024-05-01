@@ -406,7 +406,6 @@ static void ToggleRX(bool on) {
     settings.modulationType = channelModulation;
     settings.listenBw = channelBandwidth;
     RADIO_SetModulation(settings.modulationType);
-    BK4819_SetFilterBandwidth(settings.listenBw);
     BK4819_InitAGC(gEeprom.RX_AGC, settings.modulationType);
     redrawScreen = true;
   }
