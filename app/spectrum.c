@@ -71,6 +71,7 @@ static char String[32];
   int      channel;
   char     channelName[12];
   ModulationMode_t  channelModulation;
+  BK4819_FilterBandwidth_t channelBandwidth;
   void     LoadValidMemoryChannels();
 #endif
 
@@ -398,12 +399,14 @@ static void ToggleRX(bool on) {
   isListening = on;
 
   BACKLIGHT_TurnOn();
-  
+
 #ifdef ENABLE_SPECTRUM_SHOW_CHANNEL_NAME
-  // automatically switch modulation if known channel
+  // automatically switch modulation & bw if known channel
   if (on && isKnownChannel) {
     settings.modulationType = channelModulation;
+    settings.listenBw = channelBandwidth;
     RADIO_SetModulation(settings.modulationType);
+    BK4819_SetFilterBandwidth(settings.listenBw);
     BK4819_InitAGC(gEeprom.RX_AGC, settings.modulationType);
     redrawScreen = true;
   }
@@ -876,6 +879,19 @@ void LookupChannelModulation() {
 		if (tmp >= MODULATION_UKNOWN)
 			tmp = MODULATION_FM;
 		channelModulation = tmp;
+
+		if (data[4] == 0xFF)
+		{
+			channelBandwidth = BK4819_FILTER_BW_WIDE;
+		}
+		else
+		{
+			const uint8_t d4 = data[4];
+			channelBandwidth = !!((d4 >> 1) & 1u);
+			if(channelBandwidth != BK4819_FILTER_BW_WIDE)
+				channelBandwidth = ((d4 >> 5) & 3u) + 1;
+		}	
+
 }
 #endif
 
