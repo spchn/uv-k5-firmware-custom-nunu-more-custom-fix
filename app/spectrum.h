@@ -126,6 +126,19 @@ typedef enum ScanStep {
 typedef enum ScanList {
   S_SCAN_LIST_1,
   S_SCAN_LIST_2,
+  S_SCAN_LIST_3,
+  S_SCAN_LIST_4,
+  S_SCAN_LIST_5,
+  S_SCAN_LIST_6,
+  S_SCAN_LIST_7,
+  S_SCAN_LIST_8,
+  S_SCAN_LIST_9,
+  S_SCAN_LIST_10,
+  S_SCAN_LIST_11,
+  S_SCAN_LIST_12,
+  S_SCAN_LIST_13,
+  S_SCAN_LIST_14,
+  S_SCAN_LIST_15,
   S_SCAN_LIST_ALL
 } ScanList;
 

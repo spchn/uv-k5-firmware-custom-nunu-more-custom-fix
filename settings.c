@@ -327,9 +327,7 @@ void SETTINGS_UpdateChannel(uint8_t channel, const VFO_Info_t *pVFO, bool keep)
 		uint8_t  state[8];
 		ChannelAttributes_t  att = {
 			.band = 0xf,
-			.compander = 0,
-			.scanlist1 = 0,
-			.scanlist2 = 0,
+			.scanlist = 0,
 			};        // default attributes
 
 		uint16_t offset = 0x0D60 + (channel & ~7u);
@@ -337,9 +335,7 @@ void SETTINGS_UpdateChannel(uint8_t channel, const VFO_Info_t *pVFO, bool keep)
 
 		if (keep) {
 			att.band = pVFO->Band;
-			att.scanlist1 = pVFO->SCANLIST1_PARTICIPATION;
-			att.scanlist2 = pVFO->SCANLIST2_PARTICIPATION;
-			att.compander = pVFO->Compander;
+			att.scanlist = pVFO->SCANLIST;
 			if (state[channel & 7u] == att.__val)
 				return; // no change in the attributes
 		}

@@ -99,7 +99,8 @@ static uint8_t CurrentScanIndex();
 #endif
 
 const char *bwOptions[] = {"  25k", "12.5k", "6.25k"};
-const char *scanListOptions[] = {"SL I", "SL II", "ALL"};
+const char *scanListOptions[] = {"SL1", "SL2", "SL3", "SL4", "SL5", "SL6", 
+  "SL7", "SL8", "SL9", "SL10", "SL11", "SL12", "SL13", "SL14", "SL15", "ALL"};
 const uint8_t modulationTypeTuneSteps[] = {100, 50, 10};
 const uint8_t modTypeReg47Values[] = {1, 7, 5};
 
@@ -1583,13 +1584,13 @@ void APP_RunSpectrum() {
   void LoadValidMemoryChannels()
   {
     memset(scanChannel,0,sizeof(scanChannel));
-    scanChannelsCount = RADIO_ValidMemoryChannelsCount(true, settings.scanList);
+    scanChannelsCount = RADIO_ValidMemoryChannelsCount((settings.scanList != S_SCAN_LIST_ALL), settings.scanList);
     signed int channelIndex=-1;
     for(int i=0; i < scanChannelsCount; i++)
     {
       int nextChannel;
-      nextChannel = RADIO_FindNextChannel((channelIndex)+1, 1, true, settings.scanList);
-      
+      nextChannel = RADIO_FindNextChannel((channelIndex)+1, 1, (settings.scanList != S_SCAN_LIST_ALL), settings.scanList);
+
       if (nextChannel == 0xFF)
       {	// no valid channel found
         break;
