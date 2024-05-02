@@ -801,18 +801,21 @@ static void DrawStatus() {
   // display scanlists
   if(appMode==CHANNEL_MODE) {
     if (waitingForScanListNumber) {
-      sprintf(String, "SL_______________");
+      sprintf(String, "SL _______________");
     } else {
-      sprintf(String, "SL               ");
+      sprintf(String, "SL                ");
     }
     char Number[2];
+    bool slEnabled = false;
     for (int i = 1; i <= 15; i++) {
       if (settings.scanListEnabled[i-1]) {
+        slEnabled = true;
         sprintf(Number, "%d", i % 10);
-        String[i+1] = Number[0];
+        String[i+2] = Number[0];
       }
     }
-    GUI_DisplaySmallest(String, 42, 1, true, true);
+    if (slEnabled || waitingForScanListNumber)
+      GUI_DisplaySmallest(String, 42, 1, true, true);
   }
   BOARD_ADC_GetBatteryInfo(&gBatteryVoltages[gBatteryCheckCounter++ % 4]);
 
