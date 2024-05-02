@@ -155,6 +155,7 @@ typedef struct SpectrumSettings {
   ModulationMode_t modulationType;
   bool backlightAlwaysOn;
   int scanList;
+  bool scanListEnabled[15];
 } SpectrumSettings;
 
 typedef struct KeyboardState {
