@@ -65,10 +65,8 @@ void toggle_chan_scanlist(void)
 		return;
 	}
 
-	if (gTxVfo->SCANLIST == S_SCAN_LIST_15)
+	if (++gTxVfo->SCANLIST > 15)
 		gTxVfo->SCANLIST = 0;
-	else
-		gTxVfo->SCANLIST++;
 
 	SETTINGS_UpdateChannel(gTxVfo->CHANNEL_SAVE, gTxVfo, true);
 
