@@ -799,20 +799,21 @@ static void DrawStatus() {
   GUI_DisplaySmallest(String, 0, 1, true, true);
 
   // display scanlists
-  if (waitingForScanListNumber) {
-    sprintf(String, "SL***************");
-  } else {
-    sprintf(String, "SL_______________");
-  }
-  char Number[2];
-  for (int i = 1; i <= 15; i++) {
-    if (settings.scanListEnabled[i-1]) {
-      sprintf(Number, "%d", i % 10);
-      String[i+1] = Number[0];
+  if(appMode==CHANNEL_MODE) {
+    if (waitingForScanListNumber) {
+      sprintf(String, "SL_______________");
+    } else {
+      sprintf(String, "SL               ");
     }
+    char Number[2];
+    for (int i = 1; i <= 15; i++) {
+      if (settings.scanListEnabled[i-1]) {
+        sprintf(Number, "%d", i % 10);
+        String[i+1] = Number[0];
+      }
+    }
+    GUI_DisplaySmallest(String, 42, 1, true, true);
   }
-  GUI_DisplaySmallest(String, 40, 1, true, true);
-
   BOARD_ADC_GetBatteryInfo(&gBatteryVoltages[gBatteryCheckCounter++ % 4]);
 
   uint16_t voltage = (gBatteryVoltages[0] + gBatteryVoltages[1] + gBatteryVoltages[2] +
@@ -996,6 +997,7 @@ static void OnKeyDown(uint8_t key) {
 
   if (waitingForScanListNumber) {
     waitingForScanListNumber = false;
+    redrawStatus = true;
 
     int scanListNumber = 0;
 
@@ -1091,6 +1093,7 @@ static void OnKeyDown(uint8_t key) {
     {
       // ToggleScanList();
       waitingForScanListNumber = true;
+      redrawStatus = true;
     }
     else if (appMode!=SCAN_RANGE_MODE)
     {
