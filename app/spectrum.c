@@ -69,10 +69,11 @@ static char String[32];
   uint32_t lastPeakFrequency;
   bool     isKnownChannel = false;
   int      channel;
+  int      latestChannel;
   char     channelName[12];
   ModulationMode_t  channelModulation;
   BK4819_FilterBandwidth_t channelBandwidth;
-  void     LoadValidMemoryChannels();
+  void     LoadValidMemoryChannels(int latestScanListNumber);
 #endif
 
 bool isInitialized = false;
@@ -83,7 +84,7 @@ bool redrawScreen = false;
 bool newScanStart = true;
 bool preventKeypress = true;
 bool audioState = true;
-bool waitingForScanListNumber = false;
+uint8_t waitingForScanListNumber = 0;
 
 State currentState = SPECTRUM, previousState = SPECTRUM;
 
@@ -98,6 +99,8 @@ static uint8_t blacklistFreqsIdx;
 static bool IsBlacklisted(uint16_t idx);
 static uint8_t CurrentScanIndex();
 #endif
+
+char     latestScanListName[12];
 
 const char *bwOptions[] = {"  25k", "12.5k", "6.25k"};
 const char *scanListOptions[] = {"SL1", "SL2", "SL3", "SL4", "SL5", "SL6", 
@@ -473,7 +476,7 @@ static void ResetModifiers() {
   blacklistFreqsIdx = 0;
 #endif
   if(appMode==CHANNEL_MODE){
-      LoadValidMemoryChannels();
+      LoadValidMemoryChannels(255);
       AutoAdjustResolution();
   }
   ToggleNormalizeRssi(false);
@@ -800,11 +803,18 @@ static void DrawStatus() {
 
   // display scanlists
   if(appMode==CHANNEL_MODE) {
-    if (waitingForScanListNumber) {
-      sprintf(String, "SL _______________");
-    } else {
-      sprintf(String, "SL                ");
+    switch(waitingForScanListNumber) {
+      case 2:
+        sprintf(String, "SL ===============");
+        break;      
+      case 1:
+        sprintf(String, "SL _______________");
+        break;
+      default:
+        sprintf(String, "SL                ");
+        break;
     }
+
     char Number[2];
     bool slEnabled = false;
     for (int i = 1; i <= 15; i++) {
@@ -817,6 +827,7 @@ static void DrawStatus() {
     if (slEnabled || waitingForScanListNumber)
       GUI_DisplaySmallest(String, 42, 1, true, true);
   }
+
   BOARD_ADC_GetBatteryInfo(&gBatteryVoltages[gBatteryCheckCounter++ % 4]);
 
   uint16_t voltage = (gBatteryVoltages[0] + gBatteryVoltages[1] + gBatteryVoltages[2] +
@@ -998,10 +1009,7 @@ static void OnKeyDown(uint8_t key) {
   if (!isListening)
     BACKLIGHT_TurnOn();
 
-  if (waitingForScanListNumber) {
-    waitingForScanListNumber = false;
-    redrawStatus = true;
-
+  if (waitingForScanListNumber > 0) {
     int scanListNumber = 0;
 
     if (key == KEY_0)
@@ -1016,7 +1024,10 @@ static void OnKeyDown(uint8_t key) {
       scanListNumber = key + 3;
     
     if (scanListNumber > 0)
-      ToggleScanList(scanListNumber);
+      ToggleScanList(scanListNumber, waitingForScanListNumber - 1);
+
+    waitingForScanListNumber = 0;
+    redrawStatus = true;
 
     return;
   }
@@ -1084,6 +1095,10 @@ static void OnKeyDown(uint8_t key) {
     if(appMode==FREQUENCY_MODE)
 #endif  
       FreqInput();
+    if (appMode==CHANNEL_MODE) {
+      waitingForScanListNumber = 2;
+      redrawStatus = true;
+    }
     break;
   case KEY_0:
     ToggleModulation();
@@ -1095,7 +1110,7 @@ static void OnKeyDown(uint8_t key) {
     if(appMode==CHANNEL_MODE)
     {
       // ToggleScanList();
-      waitingForScanListNumber = true;
+      waitingForScanListNumber = 1;
       redrawStatus = true;
     }
     else if (appMode!=SCAN_RANGE_MODE)
@@ -1535,6 +1550,7 @@ static void Tick() {
     }
   }
   if (redrawStatus || ++statuslineUpdateTimer > 4096) {
+    latestScanListName[0] = '\0';
     RenderStatus();
     redrawStatus = false;
     statuslineUpdateTimer = 0;
@@ -1558,7 +1574,7 @@ void APP_RunSpectrum() {
   #ifdef ENABLE_SPECTRUM_CHANNEL_SCAN
     if (appMode==CHANNEL_MODE)
     {
-      LoadValidMemoryChannels();
+      LoadValidMemoryChannels(255);
       AutoAdjustResolution();
     }
   #endif
@@ -1617,7 +1633,7 @@ void APP_RunSpectrum() {
 }
 
 #ifdef ENABLE_SPECTRUM_CHANNEL_SCAN
-  void LoadValidMemoryChannels()
+  void LoadValidMemoryChannels(int latestScanListNumber)
   {
     memset(scanChannel,0,sizeof(scanChannel));
     scanChannelsCount = 0;
@@ -1654,12 +1670,16 @@ void APP_RunSpectrum() {
         {
           channelIndex = nextChannel;
           scanChannel[offset+i]=channelIndex;
+          if (sl == latestScanListNumber && i == 0) {
+            // FIXME: figure out how to display this briefly
+            memmove(latestScanListName, gMR_ChannelFrequencyAttributes[channel].Name, sizeof(latestScanListName));
+          }
         }
       }
     }
   }
 
-  void ToggleScanList(int scanListNumber)
+  void ToggleScanList(int scanListNumber, int single)
   {
     // if (settings.scanList==S_SCAN_LIST_ALL)
     // {
@@ -1670,9 +1690,15 @@ void APP_RunSpectrum() {
     //   settings.scanList++;
     // }
 
+    if (single)
+      memset(settings.scanListEnabled, 0, sizeof(settings.scanListEnabled));
+  
     settings.scanListEnabled[scanListNumber-1] = !settings.scanListEnabled[scanListNumber-1];
 
-    LoadValidMemoryChannels();
+    int latest = 255;
+    if (settings.scanListEnabled[scanListNumber-1])
+      latest = scanListNumber;
+    LoadValidMemoryChannels(latest);
     ResetModifiers();
     AutoAdjustResolution();
   }
