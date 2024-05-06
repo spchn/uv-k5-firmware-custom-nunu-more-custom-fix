@@ -10,11 +10,15 @@ My changes over [kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k
 
 * **15 scanlists instead of the normal 2**. Each channel can only belong to one scanlist but in spectrum channel scan mode (see below) you can enable any combination of lists for scanning. In spectrum channel scan mode, press `4` followed by the number of the list (`0`=10, `*`=11, `F`=12, `M`=13, `UP`=14, `DOWN`=15) to toggle that list on or off. Press `5` followed by the number of the list to disable all other lists and just enable that one. No lists enabled means scan all channels. The currently active scanlists are shown in the status line at the top of the display (e.g. `SL  2 456         `).
 
+  The scanlist that a channel belongs to is shown to the right of the channel name/frequency in memory mode (does not currently work with `ChDisp` set to `FREQ`) and can be changed by long pressing `5` as usual, or it can be managed via CHIRP (see note below).
+
+  In regular scanning mode you can switch scanlists as before by long pressing `* / Scan`.
+
   To make room for the additional scanlists in the EEPROM, the compander settings are no longer stored per channel. 
 
 * **Automatic modulation and bandwidth in spectrum mode**. When the spectrum scan (in either channel or frequency mode) detects a transmission on a known channel, it will automatically switch to the correct modulation and bandwidth configured for that channel. This means you can have channels with different modulations and bandwidths included in the scan and they will be demodulated correctly.
 
-* **Large channel name display in spectrum mode**. The current channel name is shown in large and bold text above the frequency in the spectrum mode so it's easier to see which channel is being received. In spectrum channel scan mode the current channel number is shown in a small font on the left below the number of channels (e.g. `M21`).
+* **Large channel name display in spectrum mode**. The current channel name is shown in bold above the frequency in the spectrum mode so it's easier to see which channel is being received. In spectrum channel scan mode the current channel number is shown in a small font on the left below the number of channels (e.g. `M21`).
 
 * **Backlight timeout in spectrum mode**. The backlight behaves normally in spectrum mode, ie. it lights up when any button is pressed or a transmission is received and turns off after the normal delay when there is no activity. Press `8` to toggle always-on backlight if you want to see the spectrum more clearly.
 
