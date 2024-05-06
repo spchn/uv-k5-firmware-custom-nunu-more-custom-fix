@@ -20,7 +20,7 @@ My changes over [kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k
 
 * **Large channel name display in spectrum mode**. The current channel name is shown in bold above the frequency in the spectrum mode so it's easier to see which channel is being received. In spectrum channel scan mode the current channel number is shown in a small font on the left below the number of channels (e.g. `M21`).
 
-* **Backlight timeout in spectrum mode**. The backlight behaves normally in spectrum mode, ie. it lights up when any button is pressed or a transmission is received and turns off after the normal delay when there is no activity. Press `8` to toggle always-on backlight if you want to see the spectrum more clearly.
+* **Backlight timeout in spectrum mode**. The backlight behaves normally in spectrum mode, ie. it lights up when any button is pressed or a transmission is received and turns off after the normal delay when there is no activity. Press `8` to toggle always-on backlight on or off if you want to see the spectrum more clearly.
 
 * **Messenger and encryption removed** to make more room.
 
