@@ -14,7 +14,7 @@ My changes over [kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k
 
   In regular scanning mode you can switch scanlists as before by long pressing `*`.
 
-  To make room for the additional scanlists in the EEPROM, the compander settings are no longer stored per channel. 
+  To make room for the additional scanlists in the EEPROM, the compander settings are no longer stored in channel memory. 
 
 * **Automatic modulation and bandwidth in spectrum mode**. When the spectrum scan (in either channel or frequency mode) detects a transmission on a known channel, it will automatically switch to the correct modulation and bandwidth configured for that channel. This means you can have channels with different modulations and bandwidths included in the scan and they will be demodulated correctly.
 
