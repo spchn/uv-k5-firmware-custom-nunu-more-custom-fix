@@ -12,7 +12,7 @@ My changes over [kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k
 
   The scanlist that a channel belongs to is shown to the right of the channel name/frequency in memory mode (does not currently work with `ChDisp` set to `FREQ`) and can be changed by long pressing `5` as usual, or it can be managed via CHIRP (see note below).
 
-  In regular scanning mode you can switch scanlists as before by long pressing `* / Scan`.
+  In regular scanning mode you can switch scanlists as before by long pressing `*`.
 
   To make room for the additional scanlists in the EEPROM, the compander settings are no longer stored per channel. 
 
