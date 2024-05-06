@@ -2,19 +2,21 @@
 
 <img src="images/radio_picture.jpg" width=300 align="right"/>
 
-This repository is a fork of [Kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k5-firmware-custom) which in turn is a fork of [Egzumer firmare](https://github.com/egzumer/uv-k5-firmware-custom). This fork is primarily oriented towards scanning.
+This repository is a fork of [Kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k5-firmware-custom) which in turn is a fork of [Egzumer firmare](https://github.com/egzumer/uv-k5-firmware-custom). 
+
+This fork is primarily oriented towards scanning.
 
 My changes over [Kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k5-firmware-custom):
 
 * **15 scanlists instead of the normal 2**. Each channel can only belong to one scanlist but in spectrum channel scan mode (see below) you can enable any combination of lists for scanning. In spectrum channel scan mode, press `4` followed by the number of the list (`0`=10, `*`=11, `F`=12, `M`=13, `UP`=14, `DOWN`=15) to toggle that list on or off. Press `5` followed by the number of the list to disable all other lists and just enable that one. No lists enabled means scan all channels. The currently active scanlists are shown in the status line at the top of the display (e.g. `SL  2 456         `).
 
-To make room for the additional scanlists in the EEPROM, the compander settings are no longer stored per channel. 
+  To make room for the additional scanlists in the EEPROM, the compander settings are no longer stored per channel. 
 
 * **Automatic modulation and bandwidth in spectrum mode**. When the spectrum scan (in either channel or frequency mode) detects a transmission on a known channel, it will automatically switch to the correct modulation and bandwidth configured for that channel. This means you can have channels with different modulations and bandwidths included in the scan and they will be demodulated correctly.
 
-* **Large channel name display in spectrum mode**. The current channel name is shown in large and bold text above the frequency in the spectrum mode to make it's easier to see which channel is being received. In spectrum channel scan mode the current channel number is shown in a small font on the left below the number of channels (e.g. `M21`).
+* **Large channel name display in spectrum mode**. The current channel name is shown in large and bold text above the frequency in the spectrum mode so it's easier to see which channel is being received. In spectrum channel scan mode the current channel number is shown in a small font on the left below the number of channels (e.g. `M21`).
 
-* **Backlight timeout in spectrum mode**. The backlight behaves normally in spectrum mode, ie. it lights up when any button is pressed or a transmission is received and turns off after the normal delay when there is no activity. Press `8` to toggle always-on backlight on and off if you want to see the spectrum more clearly.
+* **Backlight timeout in spectrum mode**. The backlight behaves normally in spectrum mode, ie. it lights up when any button is pressed or a transmission is received and turns off after the normal delay when there is no activity. Press `8` to toggle always-on backlight if you want to see the spectrum more clearly.
 
 * **Messenger and encryption removed** to make more room.
 
@@ -32,7 +34,7 @@ To make room for the additional scanlists in the EEPROM, the compander settings 
 * `SqTone` configurable squelch tail tones and 180* phase shift tail when in CTCSS mode
 
 > [!TIP]
-> You need to use my fork of the UV-K5 CHIRP driver [uvk5-chirp-driver](https://github.com/ntoivola/uvk5-chirp-driver-nunu/tree/develop) to support the 15 scanlists.
+> You need to use [my fork of the UV-K5 CHIRP driver](https://github.com/ntoivola/uvk5-chirp-driver-nunu/tree/develop) to support the 15 scanlists.
 
 > [!WARNING]
 > By using the firmware provided, users are responsible for ensuring compliance with all local laws and regulations governing the use of such technology. The author of the firmware shall not be held liable for any misuse or unlawful activities conducted by the user. It is the user's sole responsibility to use the firmware in a legal and responsible manner. By proceeding to use the firmware, users agree to abide by all applicable laws and regulations. Please note that this firmware has been created for scientific research purposes only.
