@@ -8,7 +8,7 @@ This fork is primarily oriented towards scanning by improving on kamilsss655's a
 
 My changes over [kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k5-firmware-custom):
 
-* **15 scanlists instead of the normal 2**. Each channel can only belong to one scanlist but in spectrum channel scan mode you can enable any combination of lists for scanning. In spectrum channel scan mode, press `4` followed by the number of the list (`0`=10, `*`=11, `F`=12, `M`=13, `UP`=14, `DOWN`=15) to toggle that list on or off. Press `5` followed by the number of the list to disable all other lists and just enable that one. No lists enabled means scan all channels. The currently active scanlists are shown in the status line at the top of the display (e.g. `SL  2 456         `).
+* **15 scanlists instead of the normal 2**. Each channel can only belong to one scanlist but in spectrum channel scan mode you can enable any combination of lists for scanning. In spectrum channel scan mode, press `4` followed by the number of the list (`0`=10, `*`=11, `F`=12, `M`=13, `UP`=14, `DOWN`=15) to toggle that list on or off. Press `5` followed by the number of the list to disable all other lists and just enable that one. No lists enabled means scan all channels. The currently enabled scanlists are shown in the status line at the top of the display (e.g. `SL  2 456         `).
 
   The scanlist that a channel belongs to is shown to the right of the channel name/frequency in memory mode (does not currently work with `ChDisp` set to `FREQ`) and can be changed by long pressing `5` as usual, or it can be managed via CHIRP (see note below).
 
