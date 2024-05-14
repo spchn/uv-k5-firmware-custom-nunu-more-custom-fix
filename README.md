@@ -4,7 +4,7 @@
 
 This repository is a fork of [kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k5-firmware-custom) which in turn is a fork of [Egzumer firmare](https://github.com/egzumer/uv-k5-firmware-custom). 
 
-This fork is primarily oriented towards scanning by improving on kamilsss655's awesome spectrum channel scan mode.
+This fork is primarily oriented towards scanning and improves upon kamilsss655's awesome spectrum channel scan mode. **This firmware is provided as-is, I offer no support and no guarantees of any kind. I made this for myself but hope someone finds it useful. Questions, feedback and PRs are welcome but no promises.**
 
 My changes over [kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k5-firmware-custom):
 
@@ -24,7 +24,7 @@ My changes over [kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k
 
 * **Messenger and encryption removed** to make more room.
 
-[Kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k5-firmware-custom), which this is a fork on, has the following additions over [Egzumer firmare](https://github.com/egzumer/uv-k5-firmware-custom):
+[Kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k5-firmware-custom), which this is a fork of, has the following additions over [Egzumer firmare](https://github.com/egzumer/uv-k5-firmware-custom):
 
 * `ENABLE_SPECTRUM_CHANNEL_SCAN` this enables spectrum channel scan mode (enter by going into memory mode and press F+5, this allows SUPER fast channel scanning (**4.5x faster than regular scanning**), regular scan of 200 memory channels takes roughly 18 seconds, **spectrum memory scan takes roughly 4 seconds**, if you have less channels stored i.e 50 - the spectrum memory scan will take only **1 second**
 * **NUNU Protocol** - message hopping mesh network functionality which allows to extend the range of infrastructure-less communications via intermediate stations (nodes), more info at [Mesh network](https://github.com/kamilsss655/uv-k5-firmware-custom/wiki/43-%E2%80%90-Mesh-network)
@@ -38,7 +38,7 @@ My changes over [kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k
 * `SqTone` configurable squelch tail tones and 180* phase shift tail when in CTCSS mode
 
 > [!TIP]
-> You need to use [my fork of the UV-K5 CHIRP driver](https://github.com/ntoivola/uvk5-chirp-driver-nunu/tree/develop) to support the 15 scanlists.
+> You need to use [my fork of the UV-K5 CHIRP driver](https://github.com/ntoivola/uvk5-chirp-driver-nunu/) with this firmware.
 
 > [!WARNING]
 > By using the firmware provided, users are responsible for ensuring compliance with all local laws and regulations governing the use of such technology. The author of the firmware shall not be held liable for any misuse or unlawful activities conducted by the user. It is the user's sole responsibility to use the firmware in a legal and responsible manner. By proceeding to use the firmware, users agree to abide by all applicable laws and regulations. Please note that this firmware has been created for scientific research purposes only.
@@ -284,6 +284,9 @@ https://github.com/DualTachyon
 
 Modified work Copyright 2024 kamilsss655
 https://github.com/kamilsss655
+
+Modified work Copyright 2024 ntoivola
+https://github.com/ntoivola
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
