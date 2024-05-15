@@ -69,10 +69,11 @@ static char String[32];
   uint32_t lastPeakFrequency;
   bool     isKnownChannel = false;
   int      channel;
+  int      latestChannel;
   char     channelName[12];
   ModulationMode_t  channelModulation;
   BK4819_FilterBandwidth_t channelBandwidth;
-  void     LoadValidMemoryChannels();
+  void     LoadValidMemoryChannels(int latestScanListNumber);
 #endif
 
 bool isInitialized = false;
@@ -83,6 +84,7 @@ bool redrawScreen = false;
 bool newScanStart = true;
 bool preventKeypress = true;
 bool audioState = true;
+uint8_t waitingForScanListNumber = 0;
 
 State currentState = SPECTRUM, previousState = SPECTRUM;
 
@@ -97,6 +99,8 @@ static uint8_t blacklistFreqsIdx;
 static bool IsBlacklisted(uint16_t idx);
 static uint8_t CurrentScanIndex();
 #endif
+
+char     latestScanListName[12];
 
 const char *bwOptions[] = {"  25k", "12.5k", "6.25k"};
 const char *scanListOptions[] = {"SL1", "SL2", "SL3", "SL4", "SL5", "SL6", 
@@ -114,7 +118,8 @@ SpectrumSettings settings = {stepsCount: STEPS_128,
                              modulationType: false,
                              dbMin: -130,
                              dbMax: -50,
-                             scanList: S_SCAN_LIST_ALL};
+                             scanList: S_SCAN_LIST_ALL,
+                             scanListEnabled: {0}};
 
 uint32_t fMeasure = 0;
 uint32_t currentFreq, tempFreq;
@@ -471,7 +476,7 @@ static void ResetModifiers() {
   blacklistFreqsIdx = 0;
 #endif
   if(appMode==CHANNEL_MODE){
-      LoadValidMemoryChannels();
+      LoadValidMemoryChannels(255);
       AutoAdjustResolution();
   }
   ToggleNormalizeRssi(false);
@@ -791,20 +796,37 @@ static void DrawStatus() {
 #ifdef SPECTRUM_EXTRA_VALUES
   sprintf(String, "%d/%d P:%d T:%d", settings.dbMin, settings.dbMax,
           Rssi2DBm(peak.rssi), Rssi2DBm(settings.rssiTriggerLevel));
-#elif ENABLE_SPECTRUM_SHOW_CHANNEL_NAME
-  if (isKnownChannel)
-  {
-    sprintf(String, "%d/%d M%i", settings.dbMin, settings.dbMax, channel+1);
-  }
-  else
-  {
-    sprintf(String, "%d/%d", settings.dbMin, settings.dbMax);
-  }
-  
 #else
   sprintf(String, "%d/%d", settings.dbMin, settings.dbMax);
 #endif
   GUI_DisplaySmallest(String, 0, 1, true, true);
+
+  // display scanlists
+  if(appMode==CHANNEL_MODE) {
+    switch(waitingForScanListNumber) {
+      case 2:
+        sprintf(String, "SL ===============");
+        break;      
+      case 1:
+        sprintf(String, "SL _______________");
+        break;
+      default:
+        sprintf(String, "SL                ");
+        break;
+    }
+
+    char Number[2];
+    bool slEnabled = false;
+    for (int i = 1; i <= 15; i++) {
+      if (settings.scanListEnabled[i-1]) {
+        slEnabled = true;
+        sprintf(Number, "%d", i % 10);
+        String[i+2] = Number[0];
+      }
+    }
+    if (slEnabled || waitingForScanListNumber)
+      GUI_DisplaySmallest(String, 42, 1, true, true);
+  }
 
   BOARD_ADC_GetBatteryInfo(&gBatteryVoltages[gBatteryCheckCounter++ % 4]);
 
@@ -906,7 +928,7 @@ static void DrawNums() {
 
     if (appMode==CHANNEL_MODE)
     {
-      sprintf(String, "%s", scanListOptions[settings.scanList]);
+      sprintf(String, "M%i", channel+1);
       GUI_DisplaySmallest(String, 0, 7, false, true);
     }
     else
@@ -987,6 +1009,29 @@ static void OnKeyDown(uint8_t key) {
   if (!isListening)
     BACKLIGHT_TurnOn();
 
+  if (waitingForScanListNumber > 0) {
+    int scanListNumber = 0;
+
+    if (key == KEY_0)
+      scanListNumber = 10;
+    else if (key <= KEY_9)
+      scanListNumber = key;
+    else if (key == KEY_STAR)
+      scanListNumber = 11;
+    else if (key == KEY_F)
+      scanListNumber = 12;
+    else if (key >= KEY_MENU && key <= KEY_DOWN)
+      scanListNumber = key + 3;
+    
+    if (scanListNumber > 0)
+      ToggleScanList(scanListNumber, waitingForScanListNumber - 1);
+
+    waitingForScanListNumber = 0;
+    redrawStatus = true;
+
+    return;
+  }
+
   switch (key) {
   case KEY_3:
     UpdateDBMax(true);
@@ -1050,6 +1095,10 @@ static void OnKeyDown(uint8_t key) {
     if(appMode==FREQUENCY_MODE)
 #endif  
       FreqInput();
+    if (appMode==CHANNEL_MODE) {
+      waitingForScanListNumber = 2;
+      redrawStatus = true;
+    }
     break;
   case KEY_0:
     ToggleModulation();
@@ -1060,7 +1109,9 @@ static void OnKeyDown(uint8_t key) {
   case KEY_4:
     if(appMode==CHANNEL_MODE)
     {
-      ToggleScanList();
+      // ToggleScanList();
+      waitingForScanListNumber = 1;
+      redrawStatus = true;
     }
     else if (appMode!=SCAN_RANGE_MODE)
     {
@@ -1499,6 +1550,7 @@ static void Tick() {
     }
   }
   if (redrawStatus || ++statuslineUpdateTimer > 4096) {
+    latestScanListName[0] = '\0';
     RenderStatus();
     redrawStatus = false;
     statuslineUpdateTimer = 0;
@@ -1522,7 +1574,7 @@ void APP_RunSpectrum() {
   #ifdef ENABLE_SPECTRUM_CHANNEL_SCAN
     if (appMode==CHANNEL_MODE)
     {
-      LoadValidMemoryChannels();
+      LoadValidMemoryChannels(255);
       AutoAdjustResolution();
     }
   #endif
@@ -1581,40 +1633,72 @@ void APP_RunSpectrum() {
 }
 
 #ifdef ENABLE_SPECTRUM_CHANNEL_SCAN
-  void LoadValidMemoryChannels()
+  void LoadValidMemoryChannels(int latestScanListNumber)
   {
     memset(scanChannel,0,sizeof(scanChannel));
-    scanChannelsCount = RADIO_ValidMemoryChannelsCount((settings.scanList != S_SCAN_LIST_ALL), settings.scanList);
-    signed int channelIndex=-1;
-    for(int i=0; i < scanChannelsCount; i++)
-    {
-      int nextChannel;
-      nextChannel = RADIO_FindNextChannel((channelIndex)+1, 1, (settings.scanList != S_SCAN_LIST_ALL), settings.scanList);
+    scanChannelsCount = 0;
+    bool listsEnabled = false;
+    
+    // loop through all scanlists
+    for (int sl=1; sl <= 16; sl++) {
+      // skip disabled scanlist
+      if (sl <= 15 && !settings.scanListEnabled[sl-1])
+        continue;
 
-      if (nextChannel == 0xFF)
-      {	// no valid channel found
+      // valid scanlist is enabled
+      if (sl <= 15 && settings.scanListEnabled[sl-1])
+        listsEnabled = true;
+      
+      // break if some lists were enabled, else scan all channels
+      if (sl > 15 && listsEnabled)
         break;
-      }
-      else
+
+      uint8_t offset = scanChannelsCount;
+      uint8_t listChannelsCount = RADIO_ValidMemoryChannelsCount(listsEnabled, sl-1);
+      scanChannelsCount += listChannelsCount;
+      signed int channelIndex=-1;
+      for(int i=0; i < listChannelsCount; i++)
       {
-        channelIndex = nextChannel;
-        scanChannel[i]=channelIndex;
+        int nextChannel;
+        nextChannel = RADIO_FindNextChannel((channelIndex)+1, 1, listsEnabled, sl-1);
+
+        if (nextChannel == 0xFF)
+        {	// no valid channel found
+          break;
+        }
+        else
+        {
+          channelIndex = nextChannel;
+          scanChannel[offset+i]=channelIndex;
+          if (sl == latestScanListNumber && i == 0) {
+            // FIXME: figure out how to display this briefly
+            memmove(latestScanListName, gMR_ChannelFrequencyAttributes[channel].Name, sizeof(latestScanListName));
+          }
+        }
       }
     }
   }
 
-  void ToggleScanList()
+  void ToggleScanList(int scanListNumber, int single)
   {
-    if (settings.scanList==S_SCAN_LIST_ALL)
-    {
-      settings.scanList=S_SCAN_LIST_1;
-    }
-    else
-    {
-      settings.scanList++;
-    }
+    // if (settings.scanList==S_SCAN_LIST_ALL)
+    // {
+    //   settings.scanList=S_SCAN_LIST_1;
+    // }
+    // else
+    // {
+    //   settings.scanList++;
+    // }
 
-    LoadValidMemoryChannels();
+    if (single)
+      memset(settings.scanListEnabled, 0, sizeof(settings.scanListEnabled));
+  
+    settings.scanListEnabled[scanListNumber-1] = !settings.scanListEnabled[scanListNumber-1];
+
+    int latest = 255;
+    if (settings.scanListEnabled[scanListNumber-1])
+      latest = scanListNumber;
+    LoadValidMemoryChannels(latest);
     ResetModifiers();
     AutoAdjustResolution();
   }
