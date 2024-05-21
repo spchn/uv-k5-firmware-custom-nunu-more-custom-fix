@@ -71,6 +71,7 @@ static char String[32];
   int      channel;
   int      latestChannel;
   char     channelName[12];
+  char     rxChannelName[12];
   ModulationMode_t  channelModulation;
   BK4819_FilterBandwidth_t channelBandwidth;
   void     LoadValidMemoryChannels(int latestScanListNumber);
@@ -132,6 +133,7 @@ char freqInputString[11];
 
 uint8_t menuState = 0;
 uint16_t listenT = 0;
+uint8_t rxChannelDisplayCountdown = 0;
 
 RegisterSpec registerSpecs[] = {
     {},
@@ -411,6 +413,7 @@ static void ToggleRX(bool on) {
   if (on && isKnownChannel) {
     settings.modulationType = channelModulation;
     settings.listenBw = channelBandwidth;
+    memmove(rxChannelName, channelName, sizeof(rxChannelName));
     RADIO_SetModulation(settings.modulationType);
     BK4819_InitAGC(gEeprom.RX_AGC, settings.modulationType);
     redrawScreen = true;
@@ -435,12 +438,16 @@ static void ToggleRX(bool on) {
     // turn on CSS tail found interrupt
     BK4819_WriteRegister(BK4819_REG_3F, BK4819_REG_02_CxCSS_TAIL);
 
-    // keep backlight on as long as we are receiving
+    // keep backlight and bold channel name display on as long as we are receiving
     gBacklightCountdown = 0;
+    rxChannelDisplayCountdown = 0;
   } else
   {
     if(appMode!=CHANNEL_MODE)
       BK4819_WriteRegister(0x43, GetBWRegValueForScan());
+
+    // keep displaying the received channel for a second or so
+    rxChannelDisplayCountdown = 4;
   }
 }
 
@@ -857,9 +864,12 @@ static void DrawF(uint32_t f) {
   UI_PrintStringSmall(String, 8, 127, 1);
 
 #if ENABLE_SPECTRUM_SHOW_CHANNEL_NAME
-  if (isKnownChannel) {
+  if (rxChannelName[0] != '\0') {
+    sprintf(String, "%s", rxChannelName);
+      UI_PrintStringSmallBold(String, 8, 127, 0);
+  } else if (isKnownChannel) {
     sprintf(String, "%s", channelName);
-    UI_PrintStringSmallBold(String, 8, 127, 0);
+    UI_PrintStringSmall(String, 8, 127, 0);
   }
 #endif
   sprintf(String, "%3s", gModulationStr[settings.modulationType]);
@@ -1509,11 +1519,16 @@ static void UpdateListening() {
 
 static void Tick() {
   if (gNextTimeslice_500ms) {
-    if (gBacklightCountdown > 0) {
+    if (gBacklightCountdown > 0)
       if (--gBacklightCountdown == 0)
 				if (!settings.backlightAlwaysOn)
 					BACKLIGHT_TurnOff();   // turn backlight off
-	  }
+
+    if (rxChannelDisplayCountdown > 0)
+      if (--rxChannelDisplayCountdown == 0)
+        if (!isListening)
+          rxChannelName[0] = '\0';
+
     gNextTimeslice_500ms = false;
 
 #ifdef ENABLE_SCAN_RANGES
@@ -1671,8 +1686,11 @@ void APP_RunSpectrum() {
           channelIndex = nextChannel;
           scanChannel[offset+i]=channelIndex;
           if (sl == latestScanListNumber && i == 0) {
-            // FIXME: figure out how to display this briefly
-            memmove(latestScanListName, gMR_ChannelFrequencyAttributes[channel].Name, sizeof(latestScanListName));
+            // put the name of the first channel from the just-enabled list in rxChannelName
+            // so it will show briefly on the screen
+            memmove(rxChannelName, gMR_ChannelFrequencyAttributes[channelIndex].Name, sizeof(rxChannelName));
+            rxChannelDisplayCountdown = 4;
+            redrawScreen = true;
           }
         }
       }
@@ -1695,6 +1713,7 @@ void APP_RunSpectrum() {
   
     settings.scanListEnabled[scanListNumber-1] = !settings.scanListEnabled[scanListNumber-1];
 
+    // if scanlist was toggled on, save its number in latest
     int latest = 255;
     if (settings.scanListEnabled[scanListNumber-1])
       latest = scanListNumber;
