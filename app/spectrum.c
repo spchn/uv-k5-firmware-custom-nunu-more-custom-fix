@@ -861,15 +861,15 @@ static void DrawStatus() {
 
 static void DrawF(uint32_t f) {
   sprintf(String, "%u.%05u", f / 100000, f % 100000);
-  UI_PrintStringSmall(String, 8, 127, 1);
+  UI_PrintStringSmall(String, 1, 127, 1);
 
 #if ENABLE_SPECTRUM_SHOW_CHANNEL_NAME
   if (rxChannelName[0] != '\0') {
     sprintf(String, "%s", rxChannelName);
-      UI_PrintStringSmallBold(String, 8, 127, 0);
+      UI_PrintStringSmallBold(String, 1, 127, 0);
   } else if (isKnownChannel) {
     sprintf(String, "%s", channelName);
-    UI_PrintStringSmall(String, 8, 127, 0);
+    UI_PrintStringSmall(String, 1, 127, 0);
   }
 #endif
   sprintf(String, "%3s", gModulationStr[settings.modulationType]);
