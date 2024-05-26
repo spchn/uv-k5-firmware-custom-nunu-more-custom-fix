@@ -28,6 +28,9 @@ My changes over [kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k
 
 * **Messenger and encryption removed** to make more room.
 
+> [!TIP]
+> **NOTE!** You need to use [my fork of the UV-K5 CHIRP driver](https://github.com/ntoivola/uvk5-chirp-driver-nunu/) with this firmware.
+
 [Kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k5-firmware-custom), which this is a fork of, has the following additions over [Egzumer firmare](https://github.com/egzumer/uv-k5-firmware-custom):
 
 * `ENABLE_SPECTRUM_CHANNEL_SCAN` this enables spectrum channel scan mode (enter by going into memory mode and press F+5, this allows SUPER fast channel scanning (**4.5x faster than regular scanning**), regular scan of 200 memory channels takes roughly 18 seconds, **spectrum memory scan takes roughly 4 seconds**, if you have less channels stored i.e 50 - the spectrum memory scan will take only **1 second**
@@ -40,9 +43,6 @@ My changes over [kamilsss65's NUNU firmware](https://github.com/kamilsss655/uv-k
 * `ENABLE_ADJUSTABLE_RX_GAIN_SETTINGS` keeps the rx gain settings set in spectrum mode after exit (otherwise these are always overwritten to default value), this makes much more sense considering that we have a radio with user adjustable gain so why not use it to adjust to current radio conditions, maximum gain allows to greatly increase reception in scan memory channels mode (in this configuration default gain settings are only set at boot and when exiting AM modulation mode to set it to sane value after am fix)
 * `VOXSen` fixed and improved VOX sensitivity setting from menu. Added `VoxDel` - VOX delay setting allowing to set value to `0` for no VOX delay which might be useful for packet radio enthusiasts (APRS etc.).
 * `SqTone` configurable squelch tail tones and 180* phase shift tail when in CTCSS mode
-
-> [!TIP]
-> You need to use [my fork of the UV-K5 CHIRP driver](https://github.com/ntoivola/uvk5-chirp-driver-nunu/) with this firmware.
 
 > [!WARNING]
 > By using the firmware provided, users are responsible for ensuring compliance with all local laws and regulations governing the use of such technology. The author of the firmware shall not be held liable for any misuse or unlawful activities conducted by the user. It is the user's sole responsibility to use the firmware in a legal and responsible manner. By proceeding to use the firmware, users agree to abide by all applicable laws and regulations. Please note that this firmware has been created for scientific research purposes only.
