@@ -1,3 +1,9 @@
+My Changes:
+- readded "UNLOCK ALL" option to F-Lock (code taken from commit f52cd95d3ced46873138da4707e9e2bff33cf5e8 from Tommotools fork of kamilsss655 firmware found here: https://github.com/Timmotools/uv-k5-firmware-custom),
+- disabled PWRON_PASSWORD,
+- enabled SHOW_CHARGE_LEVEL and REVERSE_BAT_SYMBOL,
+- enabled all Messenger options (NUNU)
+
 # Open re-implementation of the Quansheng UV-K5 v2.1.27 firmware
 
 <img src="images/radio_picture.jpg" width=300 align="right"/>
