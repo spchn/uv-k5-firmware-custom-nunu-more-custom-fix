@@ -209,18 +209,18 @@
 			 break;
  
 		 case F_LOCK_CZECH:
-			 if (Frequency >= 446006250 && Frequency <= 446193750)
+			 if (Frequency >= 44600625 && Frequency <= 44619375)
 			 	return 0;
-			 if (Frequency == 172650000 || 
-				 Frequency == 172725000 || 
-				 Frequency == 172950000 || 
-				 Frequency == 172975000 || 
-				 Frequency == 448490000 || 
-				 Frequency == 448570000 || 
-				 Frequency == 448610000 || 
-				 Frequency == 449770000 || 
-				 Frequency == 449810000 || 
-				 Frequency == 173000000) // CZECH 2m/70cm
+			 if (Frequency == 17265000 || 
+				 Frequency == 17272500 || 
+				 Frequency == 17295000 || 
+				 Frequency == 17297500 || 
+				 Frequency == 44849000 || 
+				 Frequency == 44857000 || 
+				 Frequency == 44861000 || 
+				 Frequency == 44977000 || 
+				 Frequency == 44981000 || 
+				 Frequency == 17300000) // CZECH 2m/70cm
 				 return 0;
 			 break;
  
