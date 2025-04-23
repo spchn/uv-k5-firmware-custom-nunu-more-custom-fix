@@ -169,7 +169,7 @@
 				 Frequency == 44861000 || 
 				 Frequency == 44977000 || 
 				 Frequency == 44981000 || 
-				 Frequency == 17300000) // CZECH 2m/70cm
+				 Frequency == 17305000) // CZECH 2m/70cm
 				 return 0;
 			 break;
  
