@@ -42,7 +42,7 @@ typedef enum POWER_OnDisplayMode_t POWER_OnDisplayMode_t;
 enum {
 	F_LOCK_CZECH,
 	F_LOCK_ALL,	// disable TX on all frequencies, scanner mode
-	
+	F_LOCK_LEN
 };
 
 enum {
