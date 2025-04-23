@@ -40,16 +40,8 @@ enum POWER_OnDisplayMode_t {
 typedef enum POWER_OnDisplayMode_t POWER_OnDisplayMode_t;
 
 enum {
-	F_LOCK_DEF, //all default frequencies + configurable
-	F_LOCK_FCC,
-	F_LOCK_CE,
-	F_LOCK_GB,
-	F_LOCK_430,
-	F_LOCK_438,
 	F_LOCK_CZECH,
 	F_LOCK_ALL,	// disable TX on all frequencies, scanner mode
-	F_LOCK_NONE, // enable TX on all frequencies
-	F_LOCK_LEN
 	
 };
 
