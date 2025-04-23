@@ -213,7 +213,7 @@ ifneq (, $(shell $(WHERE) git))
 	VERSION_STRING := $(shell git describe --tags --exact-match 2>$(NULL_OUTPUT))
 	
 endif
-VERSION_STRING := 1.0.2
+VERSION_STRING := 1.0.3
 
 
 ASFLAGS = -c -mcpu=cortex-m0
